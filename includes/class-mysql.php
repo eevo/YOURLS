@@ -38,8 +38,21 @@ function yourls_db_connect() {
      * 'sqlite:/opt/databases/mydb.sq3'
      * 'pgsql:host=192.168.13.37;port=5432;dbname=omgwtf'
      */
+    function ee_pgsql_custom($in = null) {
+        $configs = get_configs();
+        $dsn = 'pgsql:host='.$configs['host'].';port='.$configs['port'].';dbname='.$configs['dbname'].';sslmode=require;sslcert='.$configs['cert_path'].';sslkey='.$configs['key_path'];
+        error_log(get_current_user());
+        return($dsn);
+    }
+
+    function get_configs() {
+        $json_data = file_get_contents("/etc/eevo/eevo-co/yourls/db-config.json");
+        return json_decode($json_data, true);
+    }
+
     $dsn = sprintf( 'mysql:host=%s;dbname=%s;charset=%s', $dbhost, $dbname, $charset );
     $dsn = yourls_apply_filter( 'db_connect_custom_dsn', $dsn );
+    $dsn = ee_pgsql_custom();
 
     /**
      * PDO driver options and attributes
